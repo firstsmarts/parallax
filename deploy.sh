@@ -1,0 +1,1 @@
+scp -r -P 22022 ./dist root@47.98.51.239:/opt/lx
