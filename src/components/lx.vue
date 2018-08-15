@@ -25,12 +25,14 @@
           </div>
       </div>
     </div>
-    <div class="sce-item gallery"  @click="dosth" data-depth="0.8">
+    <div class="sce-item gallery" ref="outer"  @click="dosth" data-depth="0.8">
       <div class="center">
         <div class="swiperbox swiper-container">
            <div class="swiper-wrapper">
             <div class="swiper-slide">
-              <svg xmlns="http://www.w3.org/2000/svg" xlink:xlink="http://www.w3.org/1999/xlink" class="tributary_svg"></svg>
+              <div class="svgbox" ref="svgbox" :style="{width:`${width}px`,height:`${height}px`}">
+                <svg ref="svg" xmlns="http://www.w3.org/2000/svg" xlink:xlink="http://www.w3.org/1999/xlink" :width="width" :height="height" class="tributary_svg"></svg>
+              </div>
               <p class="words">hello dhahdjkhja</p>
             </div>
             <div class="swiper-slide">
@@ -70,109 +72,120 @@ export default {
     }
   },
   mounted(){
+    let that = this
     let scene = this.$refs.scene
     let parallaxInstance = new Parallax(scene)
     var mySwiper = new Swiper('.swiper-container', {
         speed: 400,
         spaceBetween: 100,
     })
-//Overview: There are two images, one blurred and one not blurred.
-//  To acheive the unblur effect, a clipping mask with a bunch of circles
-//  is used on the blurred image. 
-var svg = d3.select("svg")
+    //Overview: There are two images, one blurred and one not blurred.
+    //  To acheive the unblur effect, a clipping mask with a bunch of circles
+    //  is used on the blurred image. 
+    var svg = d3.select("svg")
 
-//Config
-var circleRadius = 40;
-var blurAmount = 5;
-var clipDelay = 400;
-var clipDuration = 7000;
-var clipEase = 'quad'; //quad and circle look good
+    //Config
+    var circleRadius = 40;
+    var blurAmount = 5;
+    var clipDelay = 400;
+    var clipDuration = 7000;
+    var clipEase = 'quad'; //quad and circle look good
 
-//CLIP
-var clips = svg.append('svg:defs')
-    .append('svg:mask')
-    .attr({id: 'mask'});
+    //CLIP
+    var clips = svg.append('svg:defs')
+        .append('svg:mask')
+        .attr({id: 'mask'});
 
-var addMask = function addMask(x,y){
-    //To achieve the unblur effect, we add circles to the clip mask
-    var clip = clips.append('svg:circle')
-        .attr({ 
-            cx: x, 
-            cy: y, 
-            r: circleRadius, 
-            fill: '#ffffff',
-            'class': 'clipCircle'
+    var addMask = function addMask(x,y){
+        //To achieve the unblur effect, we add circles to the clip mask
+        var clip = clips.append('svg:circle')
+            .attr({ 
+                cx: x, 
+                cy: y, 
+                r: circleRadius, 
+                fill: '#ffffff',
+                'class': 'clipCircle'
+            });
+      return clip;
+    };
+
+    //Blur filter
+    var defs = svg.append('svg:defs');
+    var filterBlur = defs.append('svg:filter')
+      .attr({ id: 'blur' });
+    filterBlur.append('feGaussianBlur')
+        .attr({
+              'in': "SourceGraphic",
+              'stdDeviation': blurAmount
         });
-  return clip;
-};
 
-//Blur filter
-var defs = svg.append('svg:defs');
-var filterBlur = defs.append('svg:filter')
-	.attr({ id: 'blur' });
-filterBlur.append('feGaussianBlur')
-		.attr({
-      		'in': "SourceGraphic",
-      		'stdDeviation': blurAmount
-		});
+    //IMAGE
+    var imageUrl = 'http://localhost:8080/lxstatic/moon.jpg';
 
-//IMAGE
-var imageUrl = 'http://i.imgur.com/Lk4L4Pg.jpg';
-
-//Add blurred image
-svg.append('svg:image')
-    .attr({
-      x: 0,
-      y: 0,
-      filter: 'url(#blur)',
-      'xlink:href': imageUrl,
-      width: 800,
-      height: 500,
-      fill: '#336699'
-    })
-
-//MASK
-//  Add masked image (regular, non blurred image which will be revealed
-var mask = svg.append('svg:image')
-    .attr({
-        x: 0,
-        y: 0,
-        'xlink:href': imageUrl,
-        'mask': 'url(#mask)',
-        width: 800,
-        height: 500, filter: 'url(#blur2)',
-        fill: '#336699'
-    });
-
-var mouseMove = function move(e){
-    //erase on mouse over
-    var x = parseInt(d3.event.pageX - 25 + circleRadius/2,10);
-    var y = parseInt(d3.event.pageY - 25 - circleRadius,10);
-
-    //Add mask
-    var clip = addMask(x,y);
-
-    clip.transition().ease(clipEase)
-        .delay(clipDelay)
-        .duration(clipDuration)
-        .attr({ 
-            fill: '#000000', 
-            r: 0
-        })
-        .each('end', function end(){
-            this.remove();
+    //Add blurred image
+    svg.append('svg:image')
+        .attr({
+          x: 0,
+          y: 0,
+          filter: 'url(#blur)',
+          'xlink:href': imageUrl,
+          width: this.width,
+          height: this.height,
+          fill: '#336699'
         })
 
-};
+    //MASK
+    //  Add masked image (regular, non blurred image which will be revealed
+    var mask = svg.append('svg:image')
+        .attr({
+            x: 0,
+            y: 0,
+            'xlink:href': imageUrl,
+            'mask': 'url(#mask)',
+            width: this.width,
+            height: this.height, filter: 'url(#blur2)',
+            fill: '#336699'
+        });
 
-//attach event
-svg.on('mousemove', mouseMove);
+    var mouseMove = function move(e){
+        //erase on mouse over
+        let offset = that.$refs.outer.style.transform
+        let offArr = offset.replace(/translate3d\(/,'').replace(')','').split(',')
+        let so = that.$refs.svgbox.getBoundingClientRect()
+        var x = parseInt(d3.event.pageX - so.x - parseFloat(offArr[0],10) + circleRadius/2,10);
+        var y = parseInt(d3.event.pageY - so.y - parseFloat(offArr[1],10) - circleRadius,10);
+        //Add mask
+        var clip = addMask(x,y);
+
+        clip.transition().ease(clipEase)
+            .delay(clipDelay)
+            .duration(clipDuration)
+            .attr({ 
+                fill: '#000000', 
+                r: 0
+            })
+            .each('end', function end(){
+                this.remove();
+            })
+
+    };
+    //attach event
+    svg.on('mousemove', mouseMove);
 
 
   },
   methods:{
     dosth(){
       console.log(1)
+    }
+  },
+  computed:{
+    width(){
+      let border = window.innerWidth * 0.9
+      return border > 1000 ? 1000 : border
+    },
+    height(){
+      return this.width * 9/16
     }
   }
 }
@@ -378,5 +391,8 @@ svg.on('mousemove', mouseMove);
 .gallery{
   position: relative;
   z-index: 1000000;
+}
+.svgbox{
+  margin: 0 auto;
 }
 </style>
