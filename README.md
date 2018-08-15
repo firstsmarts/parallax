@@ -1,4 +1,4 @@
-# lx
+# parallax
 
 > photos album
 
