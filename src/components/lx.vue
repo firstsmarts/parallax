@@ -1,5 +1,5 @@
 <template>
-  <div class="scene" ref="scene" data-pointer-events="true">
+  <div class="scene" ref="scene" data-pointer-events="true" data-hover-only="true">
     <div class="sce-item" data-depth="0.1">
       <div class="background"></div>
     </div>
@@ -8,8 +8,7 @@
         <img class="lightimg" src="../assets/light-purple.png" alt="">
       </div>
     </div>
-    <div class="sce-item board-box" data-depth="0.8">
-      <div class="linebox">
+    <div class="linebox" data-depth="0.8">
           <img class="line" src="../assets/line.png"/>
           <div class="leftpoint1">
             <div class="board board-1"></div>
@@ -23,11 +22,13 @@
           <div class="leftpoint4">
             <div class="board board-1"></div>
           </div>
-      </div>
     </div>
-    <div class="sce-item gallery" ref="outer"  @click="dosth" data-depth="0.8">
+    <div class="sce-item board-box" data-depth="0.8">
+      
+    </div>
+    <div class="sce-item gallery" ref="outer"  @click="dosth" data-depth="0.5">
       <div class="center">
-        <div class="swiperbox swiper-container">
+        <div class="swiperbox swiper-container" ref="center">
            <div class="swiper-wrapper">
             <div class="swiper-slide">
               <div class="svgbox" ref="svgbox" :style="{width:`${width}px`,height:`${height}px`}">
@@ -69,6 +70,7 @@ export default {
   data () {
     return {
       actives:['1.jpg','2.png'],
+      hungHeight: 0
     }
   },
   mounted(){
@@ -79,6 +81,9 @@ export default {
         speed: 400,
         spaceBetween: 100,
     })
+    console.log(this.$refs.center.getBoundingClientRect(),(window.innerHeight - this.$refs.center.getBoundingClientRect().height)/2)
+    this.hungHeight = (window.innerHeight - this.$refs.center.getBoundingClientRect().height)/2
+
     //Overview: There are two images, one blurred and one not blurred.
     //  To acheive the unblur effect, a clipping mask with a bunch of circles
     //  is used on the blurred image. 
@@ -171,7 +176,6 @@ export default {
     };
     //attach event
     svg.on('mousemove', mouseMove);
-
 
   },
   methods:{
@@ -351,9 +355,13 @@ export default {
   animation: swing 7s .2s infinite alternate cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 .linebox{
-  position: relative;
+  position: absolute;
   font-size: 0;
-  
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 10000000;
 }
 @media (max-width: 1200px){
   .board {
