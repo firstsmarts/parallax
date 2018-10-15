@@ -6,11 +6,11 @@ Vue.use(Router)
 
 export default new Router({
   mode: 'history',
-  base: '/lx',
+  base: '/parallax',
   routes: [
     {
       path: '',
-      name: 'lx',
+      name: 'parallax',
       component: lx
     }
   ]
