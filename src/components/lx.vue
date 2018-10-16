@@ -67,7 +67,7 @@ import * as d3 from "d3"
 import photoConfig from '../photo'
 
 export default {
-  name: 'MissLuo',
+  name: 'Lx',
   data () {
     return {
       hungHeight: 0,

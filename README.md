@@ -41,6 +41,7 @@ export default new Router({
 ```
 *If your path is based `/`, you should remove the `base` kv, you can config the base url by config the `base` *
 
+There are two bigger clouds, all have its special function, you can just have a try.
 
 ## Then you can build your own website by the follow 
 
