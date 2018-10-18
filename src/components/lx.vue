@@ -56,7 +56,7 @@
       <div class="wave wave-depth"></div>
       <div class="wave wave-sundepth-20"></div>
     </div>
-    <audio ref="audio" class="audio" loop src="/lxstatic/qingtian.mp4"></audio>
+    <audio ref="audio" class="audio" loop :src="music"></audio>
   </div>
 </template>
 
@@ -73,7 +73,8 @@ export default {
       hungHeight: 0,
       wraperHeight: 0,
       current: 5,
-      photoConfig
+      photoConfig,
+      music
     }
   },
   mounted(){
