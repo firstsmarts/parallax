@@ -56,7 +56,7 @@
       <div class="wave wave-depth"></div>
       <div class="wave wave-sundepth-20"></div>
     </div>
-    <video ref="audio" loop src="/lxstatic/qingtian.mp4"></video>
+    <audio ref="audio" class="audio" loop src="/lxstatic/qingtian.mp4"></audio>
   </div>
 </template>
 
@@ -64,7 +64,7 @@
 import Parallax from 'parallax-js'
 import Swiper from 'swiper'
 import * as d3 from "d3"
-import photoConfig from '../photo'
+import {photoConfig,music} from '../photo'
 
 export default {
   name: 'Lx',
@@ -470,5 +470,7 @@ export default {
   margin: auto;
   width: 100%;
 }
-
+.audio{
+  display: none;
+}
 </style>

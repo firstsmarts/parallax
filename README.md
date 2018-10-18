@@ -4,15 +4,24 @@
 
 ## Config your photo first
 
-Edit the photo.js to add your photos and some words you want to show.
+Edit the photo.js to add your photos,bgm and some words you want to show.
 
 /src/photo.js
-```json
-{
-    "path": "/lxstatic/1.jpg",
-    "words": "生活不止眼前的枸杞，还有诗和远方",
-    "date": "dura"
-}
+```js
+export const music = '/lxstatic/qingtian.mp3'
+export const photoConfig = [
+  {
+    path: '/lxstatic/1.jpg',
+    words: '生活不止眼前的枸杞，还有诗和远方',
+    date: 'dura'
+  },
+  {
+    path: '',
+    words: '生活不止眼前的枸杞，还有诗和远方',
+    date: 'dura',
+    secret: true
+  },
+]
 ```
 
 You should edit the path above in this json with your real path after you add your photo to the `lxstatic` folder.
@@ -42,6 +51,7 @@ export default new Router({
 *If your path is based `/`, you should remove the `base` kv, you can config the base url by config the `base` *
 
 There are two bigger clouds, all have its special function, you can just have a try.
+
 
 ## Then you can build your own website by the follow 
 
